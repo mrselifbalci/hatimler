@@ -17,7 +17,9 @@ const Cuzler: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/cuzlers`);
+        const response = await fetch(
+          `https://ihya-2025-be0afcce5189.herokuapp.com/cuzlers`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
@@ -56,13 +58,16 @@ const Cuzler: React.FC = () => {
     if (!newName) return;
 
     try {
-      const response = await fetch(`http://localhost:5001/cuzlers/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ personName: newName }),
-      });
+      const response = await fetch(
+        `https://ihya-2025-be0afcce5189.herokuapp.com/cuzlers/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ personName: newName }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to update personName");
