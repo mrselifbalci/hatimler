@@ -179,6 +179,7 @@ const Cuzler: React.FC = () => {
                   sx={{
                     background: "white",
                     border: "1px solid #ccc",
+                    width: "170px",
                   }}
                 />
                 <Button
