@@ -117,8 +117,8 @@ const Cuzler: React.FC = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 2,
-              background: "white",
+              gap: 1,
+              background: "#cccccc",
               padding: 1,
               borderRadius: 1,
             }}
@@ -130,7 +130,7 @@ const Cuzler: React.FC = () => {
               <>
                 <TextField
                   size="small"
-                  placeholder="Enter your name"
+                  placeholder="Isminizi yaziniz"
                   value={nameInputs[item.cuzNumber] || ""}
                   onChange={(e) =>
                     handleInputChange(item.cuzNumber, e.target.value)
@@ -141,7 +141,7 @@ const Cuzler: React.FC = () => {
                   size="small"
                   onClick={() => handleUpdateName(item._id, item.cuzNumber)}
                 >
-                  Add
+                  Ekle
                 </Button>
               </>
             )}
