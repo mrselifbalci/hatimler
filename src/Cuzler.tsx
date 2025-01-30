@@ -1,5 +1,14 @@
-import { Box, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface CuzlerType {
   _id: string;
@@ -13,6 +22,9 @@ const Cuzler: React.FC = () => {
   const [filteredCuzlers, setFilteredCuzlers] = useState<CuzlerType[]>([]);
   const [selectedHatim, setSelectedHatim] = useState<number>(1);
   const [nameInputs, setNameInputs] = useState<Record<number, string>>({});
+  const [adminPassword, setAdminPassword] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +55,7 @@ const Cuzler: React.FC = () => {
   const filterByHatim = (hatimNumber: number, data: CuzlerType[] = cuzlers) => {
     const filtered = data
       .filter((item) => item.hatimNumber === hatimNumber)
-      .sort((a, b) => a.cuzNumber - b.cuzNumber); // Ensure sorting is applied
+      .sort((a, b) => a.cuzNumber - b.cuzNumber);
 
     setFilteredCuzlers(filtered);
     setSelectedHatim(hatimNumber);
@@ -53,9 +65,11 @@ const Cuzler: React.FC = () => {
     setNameInputs((prev) => ({ ...prev, [cuzNumber]: value }));
   };
 
+  const [updatedCuz, setUpdatedCuz] = useState<Record<number, boolean>>({});
+  const [editedFields, setEditedFields] = useState<Record<number, boolean>>({}); // Track which fields are being edited
+
   const handleUpdateName = async (id: string, cuzNumber: number) => {
-    const newName = nameInputs[cuzNumber];
-    if (!newName) return;
+    const newName = nameInputs[cuzNumber]?.trim() ?? ""; // Allow empty string
 
     try {
       const response = await fetch(
@@ -73,24 +87,51 @@ const Cuzler: React.FC = () => {
         throw new Error("Failed to update personName");
       }
 
-      // Update the full state
+      // 1️⃣ **Update both states to reflect the new (even blank) name immediately**
       setCuzlers((prev) =>
         prev.map((item) =>
           item._id === id ? { ...item, personName: newName } : item
         )
       );
 
-      // Update only the filtered list (so UI updates immediately)
       setFilteredCuzlers((prev) =>
         prev.map((item) =>
           item._id === id ? { ...item, personName: newName } : item
         )
       );
 
-      // Clear input field
-      setNameInputs((prev) => ({ ...prev, [cuzNumber]: "" }));
+      // 2️⃣ **Show "Güncellendi" for 2 seconds, then hide button**
+      setUpdatedCuz((prev) => ({ ...prev, [cuzNumber]: true }));
+
+      setTimeout(() => {
+        setUpdatedCuz((prev) => ({ ...prev, [cuzNumber]: false }));
+        setEditedFields((prev) => ({ ...prev, [cuzNumber]: false })); // Disable input after update
+        setNameInputs((prev) => ({ ...prev, [cuzNumber]: "" })); // Reset input field
+      }, 2000);
     } catch (error) {
       console.error("Error updating personName:", error);
+    }
+  };
+
+  const handleDownloadExcel = () => {
+    const formattedData = cuzlers.map((item) => ({
+      "Hatim Numarasi": item.hatimNumber,
+      "Cüz numarası": item.cuzNumber,
+      İsim: item.personName || "",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Cuzlers");
+
+    XLSX.writeFile(workbook, "cuzlers.xlsx");
+  };
+
+  const handlePasswordSubmit = () => {
+    if (adminPassword === "LONDRA") {
+      setIsAdmin(true);
+    } else {
+      alert("Yanlis sifre");
     }
   };
 
@@ -124,30 +165,119 @@ const Cuzler: React.FC = () => {
             }}
           >
             <span>Cuz {item.cuzNumber}:</span>
-            {item.personName ? (
-              <span>{item.personName}</span>
-            ) : (
+
+            {/* Show Input Only If Editing, Otherwise Show Name */}
+            {editedFields[item.cuzNumber] || !item.personName ? (
               <>
                 <TextField
                   size="small"
                   placeholder="Isminizi yaziniz"
-                  value={nameInputs[item.cuzNumber] || ""}
+                  value={nameInputs[item.cuzNumber] ?? item.personName}
                   onChange={(e) =>
                     handleInputChange(item.cuzNumber, e.target.value)
                   }
+                  sx={{
+                    background: "white",
+                    border: "1px solid #ccc",
+                  }}
                 />
                 <Button
                   variant="contained"
                   size="small"
                   onClick={() => handleUpdateName(item._id, item.cuzNumber)}
+                  sx={{
+                    backgroundColor: updatedCuz[item.cuzNumber]
+                      ? "green"
+                      : "primary",
+                  }}
                 >
-                  Ekle
+                  {updatedCuz[item.cuzNumber]
+                    ? "Güncellendi"
+                    : item.personName
+                    ? "Güncelle"
+                    : "Ekle"}
                 </Button>
               </>
+            ) : (
+              // Show name as text, allow admin to click to edit
+              <span
+                style={{
+                  cursor: isAdmin ? "pointer" : "default",
+                  fontWeight: isAdmin ? "bold" : "normal",
+                }}
+                onClick={() =>
+                  isAdmin &&
+                  setEditedFields((prev) => ({
+                    ...prev,
+                    [item.cuzNumber]: true,
+                  }))
+                }
+              >
+                {item.personName || "—"} {/* Show dash if blank */}
+              </span>
             )}
           </Box>
         ))}
       </Box>
+
+      {/* Admin Password Input */}
+      {!isAdmin && (
+        <Box
+          sx={{
+            marginTop: 3,
+            background: "#EF9A9A",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            p: 1,
+          }}
+        >
+          <Typography sx={{ color: "white" }}>
+            Sadece Meryem hoca icin admin girisi
+          </Typography>
+          <Box
+            sx={{ marginTop: 3, display: "flex", alignItems: "center", gap: 1 }}
+          >
+            <TextField
+              size="small"
+              type={showPassword ? "text" : "password"}
+              placeholder="Admin şifresi"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              autoComplete="new-password"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={handlePasswordSubmit}
+            >
+              Tamam
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {/* Download Excel Button (Visible only for admin) */}
+      {isAdmin && (
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ marginTop: 2 }}
+          onClick={handleDownloadExcel}
+        >
+          Download Excel
+        </Button>
+      )}
     </Box>
   );
 };
