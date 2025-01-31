@@ -25,6 +25,20 @@ const Cuzler: React.FC = () => {
   const [adminPassword, setAdminPassword] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
+  const isHatimComplete = (hatimNumber: number) => {
+    const hatimCuzlers = cuzlers.filter(
+      (cuz) => cuz.hatimNumber === hatimNumber
+    );
+    return hatimCuzlers.every(
+      (cuz) => cuz.personName && cuz.personName.trim() !== ""
+    );
+  };
+  const arePreviousHatimsComplete = (hatimNumber: number) => {
+    for (let i = 1; i < hatimNumber; i++) {
+      if (!isHatimComplete(i)) return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,12 +152,40 @@ const Cuzler: React.FC = () => {
   return (
     <Box sx={{ color: "black", height: "100%", padding: 2 }}>
       {/* Hatim selection buttons */}
-      <Box sx={{ display: "flex", gap: 1, marginBottom: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          marginBottom: 2,
+          justifyContent: "center", // 👈 Center buttons
+          width: "100%", // 👈 Ensure they use full width
+        }}
+      >
         {[1, 2, 3, 4, 5].map((num) => (
           <Button
             key={num}
             variant={selectedHatim === num ? "contained" : "outlined"}
-            onClick={() => filterByHatim(num)}
+            onClick={() => {
+              if (!arePreviousHatimsComplete(num)) {
+                alert(
+                  "Lütfen önceki cüzü tamamlayın, ardından bir sonraki cüze geçebilirsiniz."
+                );
+              } else {
+                filterByHatim(num);
+              }
+            }}
+            // disabled={!arePreviousHatimsComplete(num)}
+            sx={{
+              flex: 1, // 👈 Make all buttons equal width
+              minWidth: "auto", // 👈 Prevents buttons from being too wide
+              fontSize: "0.8rem", // 👈 Reduce text size slightly
+              padding: "6px 8px", // 👈 Reduce padding for compact design
+              backgroundColor: !arePreviousHatimsComplete(num) ? "#f0f0f0" : "",
+              color: !arePreviousHatimsComplete(num) ? "#999" : "",
+              cursor: !arePreviousHatimsComplete(num)
+                ? "not-allowed"
+                : "pointer",
+            }}
           >
             Hatim {num}
           </Button>
