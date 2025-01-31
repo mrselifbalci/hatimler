@@ -180,7 +180,7 @@ const Cuzler: React.FC = () => {
             onClick={() => {
               if (!arePreviousHatimsComplete(num)) {
                 setDialogMessage(
-                  "Lütfen önceki cüzü tamamlayın, ardından bir sonraki cüze geçebilirsiniz."
+                  "Lütfen önceki hatmi tamamlayın, ardından bir sonraki hatime geçebilirsiniz."
                 );
                 setOpenDialog(true); // ✅ Show custom alert
               } else {
