@@ -9,6 +9,12 @@ import {
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
 interface CuzlerType {
   _id: string;
@@ -25,6 +31,12 @@ const Cuzler: React.FC = () => {
   const [adminPassword, setAdminPassword] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState(
+    "Lütfen önceki cüzü tamamlayın, ardından bir sonraki cüze geçebilirsiniz."
+  ); // Store message dynamically
+
   const isHatimComplete = (hatimNumber: number) => {
     const hatimCuzlers = cuzlers.filter(
       (cuz) => cuz.hatimNumber === hatimNumber
@@ -157,8 +169,8 @@ const Cuzler: React.FC = () => {
           display: "flex",
           gap: 1,
           marginBottom: 2,
-          justifyContent: "center", // 👈 Center buttons
-          width: "100%", // 👈 Ensure they use full width
+          justifyContent: "center",
+          width: "100%",
         }}
       >
         {[1, 2, 3, 4, 5].map((num) => (
@@ -167,19 +179,19 @@ const Cuzler: React.FC = () => {
             variant={selectedHatim === num ? "contained" : "outlined"}
             onClick={() => {
               if (!arePreviousHatimsComplete(num)) {
-                alert(
+                setDialogMessage(
                   "Lütfen önceki cüzü tamamlayın, ardından bir sonraki cüze geçebilirsiniz."
                 );
+                setOpenDialog(true); // ✅ Show custom alert
               } else {
                 filterByHatim(num);
               }
             }}
-            // disabled={!arePreviousHatimsComplete(num)}
             sx={{
-              flex: 1, // 👈 Make all buttons equal width
-              minWidth: "auto", // 👈 Prevents buttons from being too wide
-              fontSize: "0.8rem", // 👈 Reduce text size slightly
-              padding: "6px 8px", // 👈 Reduce padding for compact design
+              flex: 1,
+              minWidth: "auto",
+              fontSize: "0.8rem",
+              padding: "6px 8px",
               backgroundColor: !arePreviousHatimsComplete(num) ? "#f0f0f0" : "",
               color: !arePreviousHatimsComplete(num) ? "#999" : "",
               cursor: !arePreviousHatimsComplete(num)
@@ -262,6 +274,23 @@ const Cuzler: React.FC = () => {
           </Box>
         ))}
       </Box>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle style={{ fontWeight: "bold", textAlign: "center" }}>
+          ⚠️ Uyarı
+        </DialogTitle>
+        <DialogContent>
+          <p style={{ textAlign: "center" }}>{dialogMessage}</p>
+        </DialogContent>
+        <DialogActions style={{ justifyContent: "center" }}>
+          <Button
+            onClick={() => setOpenDialog(false)}
+            variant="contained"
+            color="primary"
+          >
+            Tamam
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Admin Password Input */}
       {!isAdmin && (
