@@ -69,7 +69,7 @@ const Cuzler: React.FC = () => {
         );
 
         setCuzlers(sortedData);
-        filterByHatim(4, sortedData);
+        filterByHatim(5, sortedData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -181,7 +181,7 @@ const Cuzler: React.FC = () => {
           width: "100%",
         }}
       >
-        {[1, 2, 3, 4, 5].map((num) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
           <Button
             key={num}
             variant={selectedHatim === num ? "contained" : "outlined"}
