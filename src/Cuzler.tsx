@@ -206,7 +206,7 @@ const Cuzler: React.FC = () => {
               borderRadius: 1,
             }}
           >
-            <span>Cuz {item.cuzNumber}:</span>
+            <span>Cüz {item.cuzNumber}:</span>
 
             {/* Show Input Only If Editing, Otherwise Show Name */}
             {editedFields[item.cuzNumber] || !item.personName ? (
