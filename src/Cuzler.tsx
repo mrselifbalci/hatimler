@@ -181,7 +181,46 @@ const Cuzler: React.FC = () => {
           width: "100%",
         }}
       >
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+        {[1, 2, 3, 4, 5].map((num) => (
+          <Button
+            key={num}
+            variant={selectedHatim === num ? "contained" : "outlined"}
+            onClick={() => {
+              if (!arePreviousHatimsComplete(num)) {
+                setDialogMessage(
+                  "Lütfen önceki hatmi tamamlayın, ardından bir sonraki hatime geçebilirsiniz."
+                );
+                setOpenDialog(true); // ✅ Show custom alert
+              } else {
+                filterByHatim(num);
+              }
+            }}
+            sx={{
+              flex: 1,
+              minWidth: "auto",
+              fontSize: "0.8rem",
+              padding: "6px 8px",
+              backgroundColor: !arePreviousHatimsComplete(num) ? "#f0f0f0" : "",
+              color: !arePreviousHatimsComplete(num) ? "#999" : "",
+              cursor: !arePreviousHatimsComplete(num)
+                ? "not-allowed"
+                : "pointer",
+            }}
+          >
+            Hatim {num}
+          </Button>
+        ))}
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          marginBottom: 2,
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        {[6, 7, 8, 9, 10].map((num) => (
           <Button
             key={num}
             variant={selectedHatim === num ? "contained" : "outlined"}
