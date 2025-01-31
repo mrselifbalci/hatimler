@@ -160,6 +160,14 @@ const Cuzler: React.FC = () => {
       alert("Yanlis sifre");
     }
   };
+  const isPreviousCuzsFilled = (hatimNumber: number, cuzNumber: number) => {
+    const hatimCuzlers = cuzlers.filter(
+      (cuz) => cuz.hatimNumber === hatimNumber
+    );
+    return hatimCuzlers
+      .slice(0, cuzNumber - 1) // Check only previous cüzs
+      .every((cuz) => cuz.personName && cuz.personName.trim() !== "");
+  };
 
   return (
     <Box sx={{ color: "black", height: "100%", padding: 2 }}>
@@ -230,20 +238,41 @@ const Cuzler: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange(item.cuzNumber, e.target.value)
                   }
+                  disabled={
+                    !isPreviousCuzsFilled(item.hatimNumber, item.cuzNumber) &&
+                    !isAdmin
+                  } // Disable input unless all previous cüzs are taken
                   sx={{
                     background: "white",
                     border: "1px solid #ccc",
                     width: "170px",
                   }}
                 />
+
                 <Button
                   variant="contained"
                   size="small"
                   onClick={() => handleUpdateName(item._id, item.cuzNumber)}
+                  disabled={
+                    !isPreviousCuzsFilled(item.hatimNumber, item.cuzNumber) &&
+                    !isAdmin
+                  } // Disable if input is disabled
                   sx={{
-                    backgroundColor: updatedCuz[item.cuzNumber]
-                      ? "green"
-                      : "primary",
+                    backgroundColor:
+                      !isPreviousCuzsFilled(item.hatimNumber, item.cuzNumber) &&
+                      !isAdmin
+                        ? "#ccc"
+                        : "primary", // Gray out if disabled
+                    color:
+                      !isPreviousCuzsFilled(item.hatimNumber, item.cuzNumber) &&
+                      !isAdmin
+                        ? "#666"
+                        : "white", // Adjust text color
+                    cursor:
+                      !isPreviousCuzsFilled(item.hatimNumber, item.cuzNumber) &&
+                      !isAdmin
+                        ? "not-allowed"
+                        : "pointer", // Show "not-allowed" cursor
                   }}
                 >
                   {updatedCuz[item.cuzNumber]
