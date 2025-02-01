@@ -372,9 +372,7 @@ const Cuzler: React.FC = () => {
             p: 1,
           }}
         >
-          <Typography sx={{ color: "white" }}>
-            Sadece Meryem hoca icin admin girisi
-          </Typography>
+          <Typography sx={{ color: "white" }}>Admin girisi</Typography>
           <Box
             sx={{ marginTop: 3, display: "flex", alignItems: "center", gap: 1 }}
           >
