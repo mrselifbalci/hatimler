@@ -172,6 +172,7 @@ const Cuzler: React.FC = () => {
   return (
     <Box sx={{ color: "black", height: "100%", padding: 2 }}>
       {/* Hatim selection buttons */}
+
       <Box
         sx={{
           display: "flex",
@@ -186,11 +187,11 @@ const Cuzler: React.FC = () => {
             key={num}
             variant={selectedHatim === num ? "contained" : "outlined"}
             onClick={() => {
-              if (!arePreviousHatimsComplete(num)) {
+              if (!arePreviousHatimsComplete(num) && !isAdmin) {
                 setDialogMessage(
                   "Lütfen önceki hatmi tamamlayın, ardından bir sonraki hatime geçebilirsiniz."
                 );
-                setOpenDialog(true); // ✅ Show custom alert
+                setOpenDialog(true);
               } else {
                 filterByHatim(num);
               }
@@ -200,17 +201,20 @@ const Cuzler: React.FC = () => {
               minWidth: "auto",
               fontSize: "0.8rem",
               padding: "6px 8px",
-              backgroundColor: !arePreviousHatimsComplete(num) ? "#f0f0f0" : "",
-              color: !arePreviousHatimsComplete(num) ? "#999" : "",
-              cursor: !arePreviousHatimsComplete(num)
-                ? "not-allowed"
-                : "pointer",
+              backgroundColor:
+                !arePreviousHatimsComplete(num) && !isAdmin ? "#f0f0f0" : "",
+              color: !arePreviousHatimsComplete(num) && !isAdmin ? "#999" : "",
+              cursor:
+                !arePreviousHatimsComplete(num) && !isAdmin
+                  ? "not-allowed"
+                  : "pointer",
             }}
           >
             Hatim {num}
           </Button>
         ))}
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -225,11 +229,11 @@ const Cuzler: React.FC = () => {
             key={num}
             variant={selectedHatim === num ? "contained" : "outlined"}
             onClick={() => {
-              if (!arePreviousHatimsComplete(num)) {
+              if (!arePreviousHatimsComplete(num) && !isAdmin) {
                 setDialogMessage(
                   "Lütfen önceki hatmi tamamlayın, ardından bir sonraki hatime geçebilirsiniz."
                 );
-                setOpenDialog(true); // ✅ Show custom alert
+                setOpenDialog(true);
               } else {
                 filterByHatim(num);
               }
@@ -239,11 +243,13 @@ const Cuzler: React.FC = () => {
               minWidth: "auto",
               fontSize: "0.8rem",
               padding: "6px 8px",
-              backgroundColor: !arePreviousHatimsComplete(num) ? "#f0f0f0" : "",
-              color: !arePreviousHatimsComplete(num) ? "#999" : "",
-              cursor: !arePreviousHatimsComplete(num)
-                ? "not-allowed"
-                : "pointer",
+              backgroundColor:
+                !arePreviousHatimsComplete(num) && !isAdmin ? "#f0f0f0" : "",
+              color: !arePreviousHatimsComplete(num) && !isAdmin ? "#999" : "",
+              cursor:
+                !arePreviousHatimsComplete(num) && !isAdmin
+                  ? "not-allowed"
+                  : "pointer",
             }}
           >
             Hatim {num}
