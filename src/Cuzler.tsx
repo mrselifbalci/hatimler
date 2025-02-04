@@ -256,6 +256,7 @@ const Cuzler: React.FC = () => {
           </Button>
         ))}
       </Box>
+
       <Box
         sx={{
           display: "flex",
@@ -297,7 +298,47 @@ const Cuzler: React.FC = () => {
           </Button>
         ))}
       </Box>
-
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          marginBottom: 2,
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        {[16, 17, 18, 19, 20].map((num) => (
+          <Button
+            key={num}
+            variant={selectedHatim === num ? "contained" : "outlined"}
+            onClick={() => {
+              if (!arePreviousHatimsComplete(num) && !isAdmin) {
+                setDialogMessage(
+                  "Lütfen önceki hatmi tamamlayın, ardından bir sonraki hatime geçebilirsiniz."
+                );
+                setOpenDialog(true);
+              } else {
+                filterByHatim(num);
+              }
+            }}
+            sx={{
+              flex: 1,
+              minWidth: "auto",
+              fontSize: "0.8rem",
+              padding: "6px 8px",
+              backgroundColor:
+                !arePreviousHatimsComplete(num) && !isAdmin ? "#f0f0f0" : "",
+              color: !arePreviousHatimsComplete(num) && !isAdmin ? "#999" : "",
+              cursor:
+                !arePreviousHatimsComplete(num) && !isAdmin
+                  ? "not-allowed"
+                  : "pointer",
+            }}
+          >
+            Hatim {num}
+          </Button>
+        ))}
+      </Box>
       {/* List of Cuzlers */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {filteredCuzlers.map((item) => (
